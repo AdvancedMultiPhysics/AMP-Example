@@ -1,5 +1,5 @@
 # Macro to load AMP
-MACRO ( CONFIGURE_AMP )
+MACRO( CONFIGURE_AMP )
     VERIFY_PATH( ${AMP_DIRECTORY} )
     INCLUDE( ${AMP_DIRECTORY}/amp.cmake )
     SET( GLOBAL_AMP_LIBS )
@@ -32,5 +32,6 @@ ENDMACRO()
 # Macro to configure specific options for this project
 MACRO ( CONFIGURE_THIS )
     # Put user code here
+    SET( LINK_LIBRARIES ${LINK_LIBRARIES} ${AMP_LIBS} )
 ENDMACRO ()
 

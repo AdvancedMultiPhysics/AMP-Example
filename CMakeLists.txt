@@ -67,6 +67,13 @@ INCLUDE_DIRECTORIES( "${${PROJ}_INSTALL_DIR}/include" )
 CONFIGURE_AMP()
 CONFIGURE_THIS()
 
+# Set a macro to add serial, 2 processor, and 4 processor tests
+MACRO( ADD_EXAMPLE_TEST_1_2_4 EXENAME ${ARGN} )
+    ADD_EXAMPLE_TEST( ${EXENAME} ${ARGN} )
+    ADD_EXAMPLE_TEST_PARALLEL( ${EXENAME} 2 ${ARGN} )
+    ADD_EXAMPLE_TEST_PARALLEL( ${EXENAME} 4 ${ARGN} )
+ENDMACRO()
+
 
 # Create the target for documentation
 ADD_CUSTOM_TARGET( doc )

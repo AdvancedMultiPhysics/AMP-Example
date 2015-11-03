@@ -1,3 +1,3 @@
-ADD_EXAMPLE_TEST( test_hello )
+ADD_EXAMPLE_TEST_1_2_4( test_hello )
 
 
