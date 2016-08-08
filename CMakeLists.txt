@@ -6,42 +6,53 @@ IF ( ${CMAKE_MAJOR_VERSION} EQUAL 3 )
 ENDIF()
 
 
-# Load the AMP variables (we need to load the compilers before doing anything)
-IF ( NOT AMP_DIRECTORY )
-    MESSAGE( FATAL_ERROR "PLease set: AMP_DIRECTORY" )
-ELSEIF ( NOT EXISTS "${AMP_DIRECTORY}/amp.cmake" )
-    MESSAGE( FATAL_ERROR "${AMP_DIRECTORY}/amp.cmake does not exist, has AMP been installed?" )
+MESSAGE( "===========================" )
+MESSAGE( "Configuring Example Project" )
+MESSAGE( "===========================" )
+
+
+# Set the project name
+SET( PROJ EXAMPLE )             # Set the project name for CMake
+SET( ${PROJ}_LIB example )      # Set the final library name
+SET( ${PROJ}_INC )              # Set an optional subfolder for includes (e.g. include/name/...)
+
+
+# Initialize the project (should disable langagues that the TPL builder will enable)
+PROJECT( ${PROJ} LANGUAGES )
+
+
+# Prevent users from building in place
+IF ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}" )
+    MESSAGE( FATAL_ERROR "Building code in place is a bad idea" )
 ENDIF()
-INCLUDE( "${AMP_DIRECTORY}/amp.cmake" )
 
 
-# Set the project name.  This will also control the names of the macros (ADD_PROJ_TEST, etc).
-SET( PROJ EXAMPLE )
-
-
-# Configure the project and enable any additional languages
-MESSAGE("===================")
-MESSAGE("Configuring ${PROJ}")
-MESSAGE("===================")
-PROJECT( ${PROJ} )
-#ENABLE_LANGUAGE(Fortran)
-IF( PREFIX )
-    SET( ${PROJ}_INSTALL_DIR ${PREFIX} )
+# Set source/install paths
+SET( ${PROJ}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" )
+SET( ${PROJ}_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}" )
+IF( ${PROJ}_INSTALL_DIR )
+    SET( ${PROJ}_INSTALL_DIR "${${PROJ}_INSTALL_DIR}" )
 ELSEIF( NOT ${PROJ}_INSTALL_DIR )
-    SET( ${PROJ}_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR} )
+    SET( ${PROJ}_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
+ENDIF()
+INCLUDE_DIRECTORIES( "${${PROJ}_INSTALL_DIR}/include" )
+
+
+# Load AMP and extra TPLs
+IF ( NOT ONLY_BUILD_DOCS )
+    IF ( NOT AMP_DIRECTORY )
+      MESSAGE( FATAL_ERROR "Please set: AMP_DIRECTORY" )
+    ENDIF()
+    SET( CMAKE_MODULE_PATH "${AMP_DIRECTORY}" ${CMAKE_MODULE_PATH} )
+    FIND_PACKAGE( AMP )
+    MESSAGE("AMP Found")
+    MESSAGE("  Include Paths: ${AMP_INCLUDE_DIRS}")
+    MESSAGE("  Libraries: ${AMP_LIBRARIES}")
 ENDIF()
 
 
-# Call the cmake file from the TPL builder (if used) to add any third party libraries that AMP may not be aware of.
-IF ( TPL_DIRECTORY )
-    INCLUDE( "${TPL_DIRECTORY}/TPLs.cmake" )
-ENDIF()
-
-
-# Set CMake include files
-INCLUDE( CheckIncludeFile )
-INCLUDE( "${AMP_DIRECTORY}/cmake/macros.cmake" )
-INCLUDE( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/libraries.cmake" )
+# Include the TPL inclde paths
+INCLUDE_DIRECTORIES( ${AMP_INCLUDE_DIRS} )
 
 
 # Get the repository revision
@@ -56,16 +67,17 @@ INCLUDE(CTest)
 # Create custom targets for build-test, check, and distclean
 ADD_CUSTOM_TARGET( build-test )
 ADD_CUSTOM_TARGET( check COMMAND  make test  )
-ADD_DISTCLEAN( src )
-
-
-# Add some directories to include
-INCLUDE_DIRECTORIES( "${${PROJ}_INSTALL_DIR}/include" )
+ADD_DISTCLEAN( src libexample.* )
 
 
 # Configure libraries
-CONFIGURE_AMP()
+INCLUDE( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/libraries.cmake" )
 CONFIGURE_THIS()
+
+
+# Set the external library link list
+SET( EXTERNAL_LIBS ${EXTERNAL_LIBS} ${AMP_LIBRARIES} )
+
 
 # Set a macro to add serial, 2 processor, and 4 processor tests
 MACRO( ADD_EXAMPLE_TEST_1_2_4 EXENAME ${ARGN} )
@@ -79,12 +91,12 @@ ENDMACRO()
 ADD_CUSTOM_TARGET( doc )
 ADD_CUSTOM_TARGET( latex_docs )
 IF ( USE_EXT_DOXYGEN )
-    SET( DOXYFILE_IN ${AMP_SOURCE}/doxygen/Doxyfile.in)
-    SET( DOXY_HEADER_FILE ${AMP_SOURCE}/doxygen/html/header.html )
-    SET( DOXY_FOOTER_FILE ${AMP_SOURCE}/doxygen/html/footer.html )
-    SET( DOXYFILE_OUTPUT_DIR ${${PROJ}_INSTALL_DIR}/doc/ )
-    SET( DOXYFILE_SRC_HTML_DIR ${AMP_SOURCE}/doxygen/html )
-    SET( DOXYFILE_SOURCE_DIR ${${PROJ}_SOURCE_DIR}/src )
+    SET( DOXYFILE_IN "${${PROJ}_SOURCE_DIR}/doxygen/Doxyfile.in" )
+    SET( DOXY_HEADER_FILE "${${PROJ}_SOURCE_DIR}/doxygen/html/header.html" )
+    SET( DOXY_FOOTER_FILE "${${PROJ}_SOURCE_DIR}/doxygen/html/footer.html" )
+    SET( DOXYFILE_OUTPUT_DIR "${${PROJ}_INSTALL_DIR}/doc" )
+    SET( DOXYFILE_SRC_HTML_DIR "${${PROJ}_SOURCE_DIR}/doxygen/html" )
+    SET( DOXYFILE_SOURCE_DIR "${${PROJ}_SOURCE_DIR}" )
     SET( DOXYFILE_EXTRA_SOURCES ${AMP_SOURCE}/src )
     SET( DOXYFILE_EXTRA_EXCLUDE ${AMP_SOURCE}/src/DoxygenMainpage.h )
     SET( REL_PACKAGE_HTML "" )
@@ -92,10 +104,6 @@ IF ( USE_EXT_DOXYGEN )
     MESSAGE("DOXYGEN_MACROS = ${DOXYGEN_MACROS}")
     INCLUDE(cmake/UseDoxygen.cmake)
 ENDIF()
-
-
-# Set project libraries (order matters)
-SET( EXAMPLE_LIBS  testlib )
 
 
 # Add the src directory
