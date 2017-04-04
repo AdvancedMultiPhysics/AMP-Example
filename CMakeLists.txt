@@ -90,7 +90,10 @@ ENDMACRO()
 # Create the target for documentation
 ADD_CUSTOM_TARGET( doc )
 ADD_CUSTOM_TARGET( latex_docs )
+ADD_DEPENDENCIES( doc latex_docs )
+FILE( MAKE_DIRECTORY "${${PROJ}_INSTALL_DIR}/doc" )
 IF ( USE_EXT_DOXYGEN )
+    SET( DOXYFILE_LATEX NO )
     SET( DOXYFILE_IN "${${PROJ}_SOURCE_DIR}/doxygen/Doxyfile.in" )
     SET( DOXY_HEADER_FILE "${${PROJ}_SOURCE_DIR}/doxygen/html/header.html" )
     SET( DOXY_FOOTER_FILE "${${PROJ}_SOURCE_DIR}/doxygen/html/footer.html" )
@@ -111,4 +114,47 @@ SET( EXCLUDE_TESTS_FROM_ALL 0 )
 ADD_SUBDIRECTORY( src )
 
 
+# Add the cppcheck tests
+SET( CPPCHECK_INCLUDE "-I${TIMER_INCLUDE}" )
+SET( CPPCHECK_OPTIONS -q --enable=all --force --suppress=missingIncludeSystem 
+    "--suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheckSuppressionFile" )
+IF ( CXX_STD STREQUAL 98 )
+    SET( CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --std=c99 --std=c++03 --std=posix )
+ELSEIF ( CXX_STD STREQUAL 11 )
+    SET( CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --std=c11 --std=c++11 --std=posix )
+ELSEIF ( CXX_STD STREQUAL 14 )
+    SET( CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --std=c11 --std=c++11 --std=posix )
+ENDIF()
+SET( CPPCHECK_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}" )
+FIND_PACKAGE( Cppcheck )
+
+
+# Add the cppclean tests
+SET( CPPCLEAN_OPTIONS )
+SET( CPPCLEAN_EXCLUDE 
+    libmeshGenerators.h meshGenerators.h meshTests.h
+    DOFManager_tests.h test_Discretization.h
+    Vector.h VectorDataIterator.h PetscVector.h NativePetscVector.inline.h
+    Material.h
+)
+SET( CPPCLEAN_SUPPRESSIONS 
+    ".inline.h' does not need to be #included"
+    "tmpl.h' does not need to be #included"
+    ".I' does not need to be #included"
+    "'ProfilerApp.h' does not need to be #included"
+    "'utils/shared_ptr.h' does not need to be #included"
+    "'utils/Utilities.h' does not need to be #included"
+    "'utils/Counter.h' does not need to be #included"
+)
+SET( CPPCLEAN_UNNECESSARY_INCLUDE 1 )
+SET( CPPCLEAN_EXTRA_INCLUDE 1 )
+SET( CPPCLEAN_SHOULD_INCLUDE 0 )
+SET( CPPCLEAN_INCLUDE_NOT_FOUND 0 )
+SET( CPPCLEAN_FUN_NOT_FOUND 0 )
+SET( CPPCLEAN_DECLARED 0 )
+SET( CPPCLEAN_STATIC 0 )
+SET( CPPCLEAN_UNUSED_VARIABLE 0 )
+SET( CPPCLEAN_UNKNOWN 1 )
+SET( CPPCLEAN_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}" )
+FIND_PACKAGE( Cppclean )
 
