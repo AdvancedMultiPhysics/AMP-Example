@@ -234,7 +234,7 @@ ENDIF()
 
 # Submit the results to CDash
 SET( CTEST_DROP_METHOD "http" )
-SET( CTEST_DROP_LOCATION "/CDash/submit.php?project=AMR-MHD" )
+SET( CTEST_DROP_LOCATION "/CDash/submit.php?project=AMP" )
 SET( CTEST_DROP_SITE_CDASH TRUE )
 SET( DROP_SITE_CDASH TRUE )
 SET( CTEST_DROP_SITE "vayu.ornl.gov" )
