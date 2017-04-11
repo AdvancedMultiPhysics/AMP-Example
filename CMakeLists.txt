@@ -48,6 +48,7 @@ IF ( NOT ONLY_BUILD_DOCS )
     MESSAGE("AMP Found")
     MESSAGE("  Include Paths: ${AMP_INCLUDE_DIRS}")
     MESSAGE("  Libraries: ${AMP_LIBRARIES}")
+    CONFIGURE_LINE_COVERAGE()
 ENDIF()
 
 
