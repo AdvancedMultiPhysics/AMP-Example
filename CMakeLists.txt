@@ -57,7 +57,7 @@ INCLUDE_DIRECTORIES( ${AMP_INCLUDE_DIRS} )
 
 
 # Get the repository revision
-#WRITE_REPO_VERSION( "${${PROJ}_INSTALL_DIR}/include/Version.h" )
+WRITE_REPO_VERSION( )
 
 
 # Set testing paramaters
