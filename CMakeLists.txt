@@ -1,11 +1,8 @@
 # Set some CMake properties    
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-CMAKE_POLICY(SET CMP0004 OLD)
-IF ( ${CMAKE_MAJOR_VERSION} EQUAL 3 )
-    CMAKE_POLICY(SET CMP0026 OLD)
-ENDIF()
+CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 
+# Print banner
 MESSAGE( "===========================" )
 MESSAGE( "Configuring Example Project" )
 MESSAGE( "===========================" )
@@ -39,17 +36,15 @@ INCLUDE_DIRECTORIES( "${${PROJ}_INSTALL_DIR}/include" )
 
 
 # Load AMP and extra TPLs
-IF ( NOT ONLY_BUILD_DOCS )
-    IF ( NOT AMP_DIRECTORY )
-      MESSAGE( FATAL_ERROR "Please set: AMP_DIRECTORY" )
-    ENDIF()
-    SET( CMAKE_MODULE_PATH "${AMP_DIRECTORY}" ${CMAKE_MODULE_PATH} )
-    FIND_PACKAGE( AMP )
-    MESSAGE("AMP Found")
-    MESSAGE("  Include Paths: ${AMP_INCLUDE_DIRS}")
-    MESSAGE("  Libraries: ${AMP_LIBRARIES}")
-    CONFIGURE_LINE_COVERAGE()
+IF ( NOT AMP_DIRECTORY )
+  MESSAGE( FATAL_ERROR "Please set: AMP_DIRECTORY" )
 ENDIF()
+SET( CMAKE_MODULE_PATH "${AMP_DIRECTORY}" ${CMAKE_MODULE_PATH} )
+FIND_PACKAGE( AMP )
+MESSAGE("AMP Found")
+MESSAGE("  Include Paths: ${AMP_INCLUDE_DIRS}")
+MESSAGE("  Libraries: ${AMP_LIBRARIES}")
+CONFIGURE_LINE_COVERAGE()
 
 
 # Include the TPL inclde paths
@@ -116,46 +111,12 @@ ADD_SUBDIRECTORY( src )
 
 
 # Add the cppcheck tests
-SET( CPPCHECK_INCLUDE "-I${TIMER_INCLUDE}" )
-SET( CPPCHECK_OPTIONS -q --enable=all --force --suppress=missingIncludeSystem 
-    "--suppressions-list=${CMAKE_CURRENT_SOURCE_DIR}/cppcheckSuppressionFile" )
-IF ( CXX_STD STREQUAL 98 )
-    SET( CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --std=c99 --std=c++03 --std=posix )
-ELSEIF ( CXX_STD STREQUAL 11 )
-    SET( CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --std=c11 --std=c++11 --std=posix )
-ELSEIF ( CXX_STD STREQUAL 14 )
-    SET( CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --std=c11 --std=c++11 --std=posix )
-ENDIF()
-SET( CPPCHECK_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}" )
+SET( CPPCHECK_TIMEOUT 700 )
+SET( CPPCHECK_INCLUDE "-I${TIMER_INCLUDE}" "-I${AMP_DIRECTORY}/include" "-I${${PROJ}_INSTALL_DIR}/include" )
 FIND_PACKAGE( Cppcheck )
 
 
 # Add the cppclean tests
-SET( CPPCLEAN_OPTIONS )
-SET( CPPCLEAN_EXCLUDE 
-    libmeshGenerators.h meshGenerators.h meshTests.h
-    DOFManager_tests.h test_Discretization.h
-    Vector.h VectorDataIterator.h PetscVector.h NativePetscVector.inline.h
-    Material.h
-)
-SET( CPPCLEAN_SUPPRESSIONS 
-    ".inline.h' does not need to be #included"
-    "tmpl.h' does not need to be #included"
-    ".I' does not need to be #included"
-    "'ProfilerApp.h' does not need to be #included"
-    "'utils/shared_ptr.h' does not need to be #included"
-    "'utils/Utilities.h' does not need to be #included"
-    "'utils/Counter.h' does not need to be #included"
-)
-SET( CPPCLEAN_UNNECESSARY_INCLUDE 1 )
-SET( CPPCLEAN_EXTRA_INCLUDE 1 )
-SET( CPPCLEAN_SHOULD_INCLUDE 0 )
-SET( CPPCLEAN_INCLUDE_NOT_FOUND 0 )
-SET( CPPCLEAN_FUN_NOT_FOUND 0 )
-SET( CPPCLEAN_DECLARED 0 )
-SET( CPPCLEAN_STATIC 0 )
-SET( CPPCLEAN_UNUSED_VARIABLE 0 )
-SET( CPPCLEAN_UNKNOWN 1 )
 SET( CPPCLEAN_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}" )
 FIND_PACKAGE( Cppclean )
 
