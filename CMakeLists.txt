@@ -19,7 +19,7 @@ PROJECT( ${PROJ} LANGUAGES )
 
 
 # Prevent users from building in place
-IF ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}" )
+IF ( "${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}" )
     MESSAGE( FATAL_ERROR "Building code in place is a bad idea" )
 ENDIF()
 
@@ -28,7 +28,7 @@ ENDIF()
 SET( ${PROJ}_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" )
 SET( ${PROJ}_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}" )
 IF( ${PROJ}_INSTALL_DIR )
-    SET( ${PROJ}_INSTALL_DIR "${${PROJ}_INSTALL_DIR}" )
+    # Install path is set
 ELSEIF( NOT ${PROJ}_INSTALL_DIR )
     SET( ${PROJ}_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
 ENDIF()
@@ -37,19 +37,23 @@ INCLUDE_DIRECTORIES( "${${PROJ}_INSTALL_DIR}/include" )
 
 # Load AMP and extra TPLs
 IF ( NOT AMP_DIRECTORY )
-  MESSAGE( FATAL_ERROR "Please set: AMP_DIRECTORY" )
+    MESSAGE( FATAL_ERROR "AMP_DIRECTORY must be specified")
 ENDIF()
 SET( CMAKE_MODULE_PATH "${AMP_DIRECTORY}" ${CMAKE_MODULE_PATH} )
 FIND_PACKAGE( AMP )
 MESSAGE("AMP Found")
-MESSAGE("  Include Paths: ${AMP_INCLUDE_DIRS}")
-MESSAGE("  Libraries: ${AMP_LIBRARIES}")
-CONFIGURE_LINE_COVERAGE()
+MESSAGE("  TPLs Built:    ${TPL_LIST}")
+MESSAGE("  TPLs Included: ${TPL_LIST_FOUND}")
+MESSAGE("  AMP Include Paths: ${AMP_INCLUDE_DIRS}")
+MESSAGE("  TPL Include Paths: ${TPL_INCLUDE_DIRS}")
+MESSAGE("  AMP Libraries: ${AMP_LIBRARIES}" )
+MESSAGE("  TPL Libraries: ${TPL_LIBRARIES}")
 
 
-# Include the TPL inclde paths
-INCLUDE_DIRECTORIES( ${AMP_INCLUDE_DIRS} )
 
+# Include the TPL inclde paths and libraries
+INCLUDE_DIRECTORIES( ${AMP_INCLUDE_DIRS} ${TPL_INCLUDE_DIRS} )
+SET( TPL_LIBS ${AMP_LIBRARIES} ${TPL_LIBRARIES} )
 
 # Get the repository revision
 WRITE_REPO_VERSION( )
@@ -57,7 +61,7 @@ WRITE_REPO_VERSION( )
 
 # Set testing paramaters
 ENABLE_TESTING()
-INCLUDE(CTest)
+INCLUDE( CTest )
 
 
 # Create custom targets for build-test, check, and distclean
