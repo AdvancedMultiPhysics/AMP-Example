@@ -50,10 +50,14 @@ MESSAGE("  AMP Libraries: ${AMP_LIBRARIES}" )
 MESSAGE("  TPL Libraries: ${TPL_LIBRARIES}")
 
 
+# Enable coverage
+CONFIGURE_LINE_COVERAGE()
+
 
 # Include the TPL inclde paths and libraries
 INCLUDE_DIRECTORIES( ${AMP_INCLUDE_DIRS} ${TPL_INCLUDE_DIRS} )
 SET( TPL_LIBS ${AMP_LIBRARIES} ${TPL_LIBRARIES} )
+
 
 # Get the repository revision
 WRITE_REPO_VERSION( )
