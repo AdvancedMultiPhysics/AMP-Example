@@ -1,4 +1,58 @@
-noExplicitConstructor:*/AMP/utils/AMP_MPI.h
-templateRecursion:*/AMP/utils/AMP_MPI.I
+//***********************************************************
+// Suppress all instances of certain warnings               *
+// These are due to too many false postives, etc.           *
+//***********************************************************
+operatorEq:*
+shadowFunction:*
+shadowVar:*
+shadowVariable:*
+unmatchedSuppression:*
+duplicateCondition:*
+virtualCallInConstructor:*
+invalidscanf:*
+invalidscanf_libc:*
+knownConditionTrueFalse:*
+useStlAlgorithm:*           // too aggressive
+returnDanglingLifetime:*    // false positives with std::tie
+missingInclude:*            //we are not checking dependencies
+unusedFunction:*            // Suppress unusedFunction messages (functions may be used by subsequent packages)
+redundantAssignment:*       // Suppress redundantAssignment, can be better practice in many instances
+redundantCopy:*             // Suppress redundantAssignment, can be better practice in many instances
+preprocessorErrorDirective:* // Suppress #error messages (may be valid and will be caught by compiler)
 
+
+//***********************************************************
+// Suppress headers in AMP                                  *
+//***********************************************************
+noExplicitConstructor:*/AMP/ampmesh/MeshID.h
+noExplicitConstructor:*/AMP/ampmesh/MeshPoint.h
+noExplicitConstructor:*/AMP/ampmesh/MeshGeometry.h
+noExplicitConstructor:*/AMP/ampmesh/MeshElement.h
+noExplicitConstructor:*/AMP/ampmesh/MeshUtilities.h
+noExplicitConstructor:*/AMP/utils/Array.h
+noExplicitConstructor:*/AMP/utils/ArraySize.h
+noExplicitConstructor:*/AMP/utils/AMP_MPI.h
+noExplicitConstructor:*/AMP/utils/Database.h
+noExplicitConstructor:*/AMP/utils/string_view.h
+noExplicitConstructor:*/AMP/utils/kdtree.h
+noExplicitConstructor:*/AMP/utils/extended_int.h
+noExplicitConstructor:*/AMP/vectors/Scalar.h
+noExplicitConstructor:*/AMP/vectors/Vector.h
+noExplicitConstructor:*/AMP/vectors/petsc/PetscHelpers.h
+noExplicitConstructor:*/AMP/vectors/testHelpers/petsc/PetscVectorFactory.h
+duplicateExpression:*/AMP/utils/Array.hpp
+duplicateExpression:*/AMP/utils/Database.hpp
+duplicateExpression:*/AMP/utils/Array.hpp
+syntaxError:*/AMP/ampmesh/*Iterator.h
+unusedPrivateFunction:*/AMP/materials/Property.h
+nullPointer:*/AMP/materials/Property.h
+nullPointer:*/AMP/utils/Array.hpp
+nullPointer:*/AMP/utils/ArraySize.h
+constParameter:*/AMP/matrices/Matrix.inline.h
+constParameter:*/AMP/vectors/Vector.inline.h
+multiCondition:*/AMP/vectors/Scalar.hpp
+noConstructor:*/AMP/utils/RNG.h
+operatorEqRetRefThis:*/AMP/utils/threadpool/ThreadPoolId.hpp
+arrayIndexOutOfBounds:*/AMP/utils/DelaunayFaceList.hpp
+templateRecursion:*/AMP/utils/AMP_MPI.I
 
