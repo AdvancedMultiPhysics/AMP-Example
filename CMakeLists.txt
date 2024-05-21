@@ -69,8 +69,6 @@ INCLUDE( CTest )
 
 
 # Create custom targets for build-test, check, and distclean
-ADD_CUSTOM_TARGET( build-test )
-ADD_CUSTOM_TARGET( check COMMAND  make test  )
 ADD_DISTCLEAN( src libexample.* )
 
 
@@ -86,8 +84,8 @@ SET( EXTERNAL_LIBS ${EXTERNAL_LIBS} ${AMP_LIBRARIES} )
 # Set a macro to add serial, 2 processor, and 4 processor tests
 MACRO( ADD_EXAMPLE_TEST_1_2_4 EXENAME ${ARGN} )
     ADD_EXAMPLE_TEST( ${EXENAME} ${ARGN} )
-    ADD_EXAMPLE_TEST_PARALLEL( ${EXENAME} 2 ${ARGN} )
-    ADD_EXAMPLE_TEST_PARALLEL( ${EXENAME} 4 ${ARGN} )
+    ADD_EXAMPLE_TEST( ${EXENAME} ${ARGN} PROCS 2 )
+    ADD_EXAMPLE_TEST( ${EXENAME} ${ARGN} PROCS 4 )
 ENDMACRO()
 
 
