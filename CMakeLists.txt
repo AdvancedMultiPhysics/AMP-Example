@@ -35,32 +35,13 @@ ENDIF()
 INCLUDE_DIRECTORIES( "${${PROJ}_INSTALL_DIR}/include" )
 
 
-# Load AMP and extra TPLs
+# Load AMP
+ENABLE_LANGUAGE( CXX )
 IF ( NOT AMP_DIRECTORY )
     MESSAGE( FATAL_ERROR "AMP_DIRECTORY must be specified")
 ENDIF()
-SET( CMAKE_MODULE_PATH "${AMP_DIRECTORY}" ${CMAKE_MODULE_PATH} )
-FIND_PACKAGE( AMP )
-MESSAGE("AMP Found")
-MESSAGE("  TPLs Built:    ${TPL_LIST}")
-MESSAGE("  TPLs Included: ${TPL_LIST_FOUND}")
-MESSAGE("  AMP Include Paths: ${AMP_INCLUDE_DIRS}")
-MESSAGE("  TPL Include Paths: ${TPL_INCLUDE_DIRS}")
-MESSAGE("  AMP Libraries: ${AMP_LIBRARIES}" )
-MESSAGE("  TPL Libraries: ${TPL_LIBRARIES}")
-
-
-# Enable coverage
-CONFIGURE_LINE_COVERAGE()
-
-
-# Include the TPL inclde paths and libraries
-INCLUDE_DIRECTORIES( ${AMP_INCLUDE_DIRS} ${TPL_INCLUDE_DIRS} )
-SET( TPL_LIBS ${AMP_LIBRARIES} ${TPL_LIBRARIES} )
-
-
-# Get the repository revision
-WRITE_REPO_VERSION( )
+INCLUDE_DIRECTORIES( "${AMP_DIRECTORY}/include" )
+FIND_PACKAGE( AMP REQUIRED PATHS "${AMP_DIRECTORY}/lib/cmake" )
 
 
 # Set testing paramaters
@@ -69,7 +50,7 @@ INCLUDE( CTest )
 
 
 # Create custom targets for build-test, check, and distclean
-ADD_DISTCLEAN( src libexample.* )
+#ADD_DISTCLEAN( src libexample.* )
 
 
 # Configure libraries
