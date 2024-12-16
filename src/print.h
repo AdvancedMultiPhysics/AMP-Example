@@ -1,10 +1,8 @@
-#include "print.h"
-#include "AMP/utils/AMP_MPI.h"
+#ifndef AMP_EXAMPLE_PRINT
+#define AMP_EXAMPLE_PRINT
 
-#include <iostream>
 
-void print_hello_world()
-{
-    AMP::AMP_MPI comm( AMP_COMM_WORLD );
-    std::cout << "Rank " << comm.getRank() << ":  Hello world\n";
-}
+void print_hello_world();
+
+
+#endif
