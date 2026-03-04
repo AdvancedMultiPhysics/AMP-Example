@@ -42,7 +42,6 @@ noExplicitConstructor:*/AMP/vectors/petsc/PetscHelpers.h
 noExplicitConstructor:*/AMP/vectors/testHelpers/petsc/PetscVectorFactory.h
 duplicateExpression:*/AMP/utils/Array.hpp
 duplicateExpression:*/AMP/utils/Database.hpp
-duplicateExpression:*/AMP/utils/Array.hpp
 syntaxError:*/AMP/ampmesh/*Iterator.h
 unusedPrivateFunction:*/AMP/materials/Property.h
 nullPointer:*/AMP/materials/Property.h
